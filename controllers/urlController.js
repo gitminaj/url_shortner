@@ -16,12 +16,28 @@ const generateShorUrl = async (req,res) =>{
         shortId: shortId,
         redirectUrl: body.url,
         visitHistory: [],
+        createdBy: req.user._id
     });
 
-    return res.json({
-        success: true,
+    return res.render( "home", {
         id: shortId
+    } )
+
+}
+
+const urlAnalitics = async (req,res) =>{
+    const shortId = req.params.shortId;
+    const url = await URL.findOne({ shortId });
+    if(!url){
+        return res.json({
+            success: false,
+            message: "bad request"
+        })
+    }
+    return res.json({
+        visitHistory: url.visitHistory.length,
+        urlAnalitics: url.visitHistory
     })
 }
 
-module.exports = { generateShorUrl}
+module.exports = { generateShorUrl, urlAnalitics}
